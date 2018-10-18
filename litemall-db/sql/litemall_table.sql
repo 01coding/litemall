@@ -37,7 +37,7 @@ CREATE TABLE `litemall_ad` (
   `version` int(11) DEFAULT '0' COMMENT '乐观锁字段',
   PRIMARY KEY (`id`),
   KEY `enabled` (`enabled`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COMMENT='广告表';
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COMMENT='广告表';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -84,6 +84,21 @@ CREATE TABLE `litemall_admin` (
   `version` int(11) DEFAULT '0' COMMENT '乐观锁字段',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='管理员表';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `litemall_admin_role`
+--
+
+DROP TABLE IF EXISTS `litemall_admin_role`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `litemall_admin_role` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `admin_id` int(11) NOT NULL COMMENT '管理员ID',
+  `role_id` int(11) NOT NULL COMMENT '角色ID',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='管理员角色关联表';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -155,7 +170,7 @@ CREATE TABLE `litemall_category` (
   `version` int(11) DEFAULT '0' COMMENT '乐观锁字段',
   PRIMARY KEY (`id`),
   KEY `parent_id` (`pid`)
-) ENGINE=InnoDB AUTO_INCREMENT=1036005 DEFAULT CHARSET=utf8mb4 COMMENT='类目表';
+) ENGINE=InnoDB AUTO_INCREMENT=1036006 DEFAULT CHARSET=utf8mb4 COMMENT='类目表';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -203,14 +218,13 @@ CREATE TABLE `litemall_comment` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1005 DEFAULT CHARSET=utf8 COMMENT='评论表';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
--- ----------------------------
--- Table structure for litemall_feedback
--- ----------------------------
+--
+-- Table structure for table `litemall_feedback`
+--
 
 DROP TABLE IF EXISTS `litemall_feedback`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-DROP TABLE IF EXISTS `litemall_feedback`;
 CREATE TABLE `litemall_feedback` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL DEFAULT '0' COMMENT '用户表的用户ID',
@@ -226,7 +240,8 @@ CREATE TABLE `litemall_feedback` (
   `version` int(11) DEFAULT '0' COMMENT '乐观锁字段',
   PRIMARY KEY (`id`),
   KEY `id_value` (`status`)
-) ENGINE=InnoDB AUTO_INCREMENT=1007 DEFAULT CHARSET=utf8 COMMENT='意见反馈表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='意见反馈表';
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `litemall_footprint`
@@ -280,7 +295,7 @@ CREATE TABLE `litemall_goods` (
   KEY `cat_id` (`category_id`),
   KEY `brand_id` (`brand_id`),
   KEY `sort_order` (`sort_order`)
-) ENGINE=InnoDB AUTO_INCREMENT=1181003 DEFAULT CHARSET=utf8mb4 COMMENT='商品基本信息表';
+) ENGINE=InnoDB AUTO_INCREMENT=1181006 DEFAULT CHARSET=utf8mb4 COMMENT='商品基本信息表';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -300,7 +315,7 @@ CREATE TABLE `litemall_goods_attribute` (
   `version` int(11) DEFAULT '0' COMMENT '乐观锁字段',
   PRIMARY KEY (`id`),
   KEY `goods_id` (`goods_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=874 DEFAULT CHARSET=utf8mb4 COMMENT='商品参数表';
+) ENGINE=InnoDB AUTO_INCREMENT=872 DEFAULT CHARSET=utf8mb4 COMMENT='商品参数表';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -321,7 +336,7 @@ CREATE TABLE `litemall_goods_specification` (
   `version` int(11) DEFAULT '0' COMMENT '乐观锁字段',
   PRIMARY KEY (`id`),
   KEY `goods_id` (`goods_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=260 DEFAULT CHARSET=utf8mb4 COMMENT='商品规格表';
+) ENGINE=InnoDB AUTO_INCREMENT=246 DEFAULT CHARSET=utf8mb4 COMMENT='商品规格表';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -344,7 +359,7 @@ CREATE TABLE `litemall_groupon` (
   `deleted` tinyint(1) DEFAULT '0' COMMENT '逻辑删除',
   `version` int(11) DEFAULT '0' COMMENT '乐观锁字段',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -366,7 +381,7 @@ CREATE TABLE `litemall_groupon_rules` (
   `deleted` tinyint(1) DEFAULT '0' COMMENT '逻辑删除',
   `version` int(11) DEFAULT '0' COMMENT '乐观锁字段',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -472,6 +487,28 @@ CREATE TABLE `litemall_order_goods` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `litemall_permission`
+--
+
+DROP TABLE IF EXISTS `litemall_permission`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `litemall_permission` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `value` varchar(50) NOT NULL COMMENT '权限值，shiro的权限控制表达式',
+  `parent` varchar(50) CHARACTER SET utf8 DEFAULT NULL COMMENT '父权限id',
+  `name` varchar(50) DEFAULT NULL COMMENT '权限名称',
+  `type` int(3) DEFAULT '1' COMMENT '权限类型：1.菜单 2.按钮 3.接口 4.特殊',
+  `leaf` tinyint(1) DEFAULT '0' COMMENT '是否叶子节点',
+  `add_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `deleted` tinyint(1) DEFAULT '0',
+  `version` int(11) DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `pval` (`value`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='权限表';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `litemall_product`
 --
 
@@ -489,7 +526,7 @@ CREATE TABLE `litemall_product` (
   `deleted` tinyint(1) DEFAULT '0' COMMENT '逻辑删除',
   `version` int(11) DEFAULT '0' COMMENT '乐观锁字段',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=259 DEFAULT CHARSET=utf8mb4 COMMENT='商品货品表';
+) ENGINE=InnoDB AUTO_INCREMENT=247 DEFAULT CHARSET=utf8mb4 COMMENT='商品货品表';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -509,7 +546,46 @@ CREATE TABLE `litemall_region` (
   KEY `parent_id` (`pid`),
   KEY `region_type` (`type`),
   KEY `agency_id` (`code`)
-) ENGINE=InnoDB AUTO_INCREMENT=46183 DEFAULT CHARSET=utf8mb4 COMMENT='行政区域表';
+) ENGINE=InnoDB AUTO_INCREMENT=3232 DEFAULT CHARSET=utf8mb4 COMMENT='行政区域表';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `litemall_role`
+--
+
+DROP TABLE IF EXISTS `litemall_role`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `litemall_role` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '角色id',
+  `name` varchar(50) NOT NULL COMMENT '角色名，用于显示',
+  `desc` varchar(100) DEFAULT NULL COMMENT '角色描述',
+  `value` varchar(100) NOT NULL COMMENT '角色值，用于权限判断',
+  `add_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `deleted` tinyint(1) DEFAULT '0' COMMENT '逻辑删除',
+  `version` int(11) DEFAULT '0' COMMENT '乐观锁更新字段',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `value_UNIQUE` (`value`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='角色表';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `litemall_role_permission`
+--
+
+DROP TABLE IF EXISTS `litemall_role_permission`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `litemall_role_permission` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `role_id` int(11) NOT NULL,
+  `permission_value` varchar(50) NOT NULL COMMENT '权限值，shiro的权限控制表达式',
+  `permission_type` int(5) DEFAULT NULL COMMENT '权限类型：1.菜单 2.按钮 3.接口 4.特殊',
+  `add_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `deleted` tinyint(1) DEFAULT '0' COMMENT '逻辑删除',
+  `version` int(11) DEFAULT '0' COMMENT '乐观锁更新字段',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='角色权限关联表';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -621,7 +697,7 @@ CREATE TABLE `litemall_user` (
   `version` int(11) DEFAULT '0' COMMENT '乐观锁字段',
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_name` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -652,4 +728,4 @@ CREATE TABLE `litemall_user_formid` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-08-10 13:30:07
+-- Dump completed on 2018-10-18 19:41:17
