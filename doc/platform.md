@@ -14,13 +14,14 @@ litemall-all模块则只是一个包裹模块，几乎没有任何代码。该�
 
 litemall数据库基于nideshop中的[nideshop.sql](https://github.com/tumobi/nideshop/blob/master/nideshop.sql)数据库，然后在实际开发过程中进行了调整和修改:
 
-* 删除了一些目前不必要的表；
+* 删除了一些表；
+* 补充了一些表；
 * 删除了表中一些目前不必要的字段；
 * 行政区域数据litemall_region没有采用原nideshop中的数据，而是采用了[Administrative-divisions-of-China](https://github.com/modood/Administrative-divisions-of-China)；
 * 表中的某些字段采用JSON存储；
 * 表中的日期或时间字段采用DATE、DATETIME；
 * 字段的数据类型粗粒度化，例如避免MEDIUMINT，而是INT；
-* 表的数据做了清理、调整和补充（假数据）。
+* 表的数据做了清理、调整和补充（假数据）；
 
 litemall数据库由三个sql文件组成，在litemall-db文件夹下面的sql文件夹中：
 
@@ -376,7 +377,7 @@ litemall数据库由三个sql文件组成，在litemall-db文件夹下面的sql�
 #### 2.1.5.1 deleted
 
 除极少数表，其他所有表都存在`deleted`字段，支持逻辑删除。
-因此目前删除数据时，不会直接删除数据，而是修改`deleted`字段。
+因此目前删除数据时，不会直接删除数据，而是更新`deleted`字段值。
 当然，数据库管理员可以连接到数据库直接删除数据，或者开发者
 可以修改这里的逻辑采用物理删除。
 
@@ -387,7 +388,7 @@ litemall数据库由三个sql文件组成，在litemall-db文件夹下面的sql�
 #### 2.1.5.3 version
 
 如果开发者需要在访问表时采用乐观锁机制，则需要在表中设置`version`字段，
-这个字段开发者不需要管理，而是由程序自动使用，来提高乐观锁机制。
+这个字段开发者不需要设置值，而是由代码自动设置。
 
 具体使用方法可以参考`2.2.8 乐观锁`
 
@@ -395,11 +396,15 @@ litemall数据库由三个sql文件组成，在litemall-db文件夹下面的sql�
 
 litemall-db模块是一个普通的Spring Boot应用，基于mybatis框架实现数据库访问操作，对外提供业务数据访问服务。
 
+注意：
+> 如果开发者不熟悉mybatis，建议先阅读相关资料；
+> 当然，开发者也可以采用其他数据库访问技术。
+
 此外，litemall-db最终是作为一个类库被其他模块所依赖使用，因此并不对外
 直接服务，没有使用Spring MVC技术。
 
 技术：
-* Spring Boot 1.5.10
+* Spring Boot 2.x
 * MySQL
 * Druid
 * Mybatis
@@ -619,11 +624,25 @@ https://blog.csdn.net/isea533/article/details/42102297
 数据删除可以直接使用delete方法进行物理删除，也可以采用设置删除字段进行逻辑删除。
 根据具体业务，也有可能部分数据可以物理删除，部分数据只能逻辑删除。
 
-目前所有删除操作是逻辑删除，除了极少数表外，其他所有表的设置了`deleted 字段。
+具体到代码层面，可以看mybatis自动生成的两种类型的删除操作：
+```
+deleteWithVersionByExample
+deleteWithVersionByPrimaryKey
+deleteByExample
+deleteByPrimaryKey
+```
+和
+```
+logicalDeleteByExample
+logicalDeleteByPrimaryKey
+```
 
+这里`deleteXXX`就是物理删除操作，而`logicalDeleteXXX`则是逻辑删除操作。
+
+目前本项目所有删除操作都是采用逻辑删除方式，
 开发者可以自行修改代码进行真正的物理删除。
 
-### 2.2.8 并发访问
+### 2.2.8 并发更新
 
 由于服务是多线程并发的，因此这带来了多线程同时操作数据库中同一数据的问题。
 由于数据极少删除或者是逻辑删除，因此操作数据，可以简化成更新数据。
@@ -651,16 +670,31 @@ https://blog.csdn.net/isea533/article/details/42102297
 当然，由于采用乐观锁，这里也会带来另外一个问题：
 数据库有可能更新失败，那么如何处理更新失败的情况？
 
-目前的方法是在业务层多次尝试。
-
-例如：
-由于用户A和B同时更新同一商品数量，而用户A成功，B则失败。
-此时B失败后会再次进行商品购买逻辑。
-
-当然逻辑上这里仍然会存在再次和其他用户同时购买而失败的情况。
-不过考虑到本项目设想的场景，因此可以采用。
+目前如果更新失败，只是简单向前端返回错误信息。
+这里用户友好性较差，但是考虑到实际情况中管理后台其实只有少数人管理数据，
+因此产生乐观更新失败的情况可能比较少。
 
 开发者需要注意这个问题，可能需要采用其他技术来解决或避免。
+
+具体到代码层面，可以看mybatis自动生成的两种类型的更新操作：
+```
+updateByExampleSelective
+updateByExample
+updateByPrimaryKeySelective
+updateByPrimaryKey
+```
+和
+```
+updateWithVersionByExample
+updateWithVersionByExampleSelective
+updateWithVersionByPrimaryKey
+updateWithVersionByPrimaryKeySelective
+```
+
+这里`updateByXXX`就是普通更新操作，而`updateWithVersionByXXX`则是乐观锁更新操作。
+
+目前本项目所有更新操作都是采用乐观锁更新方式，
+开发者可以自行修改代码进行普通更新操作（可能更新效率更高）。
 
 ### 2.2.9 事务管理
 
@@ -677,7 +711,7 @@ litemall-db模块中不涉及到事务管理，而是在其他后台服务模块
 当事务管理中的任何SQL操作出现错误而抛出异常时，则回滚之前的操作。
 
 注意：
-> 并发访问是多个用户同时操作单个表时可能出现的问题；
+> 并发更新是多个用户同时操作单个表时可能出现的问题；
 > 而事务管理是单个用户操作多个表时可能出现的问题。
 
 ### 2.2.10 mybatis增强框架
@@ -790,13 +824,24 @@ bcypt代码本质上是spring里面的代码。
 
 在章节1.5中讨论的部署方案中设计了一种单主机单服务方案，
 也就是说两个后台服务和静态文件都部署在一个Spring Boot应用中。
+这里Spring Boot应用是一个包含嵌入式tomcat的可执行jar包文件。
 
 注意：
-> 这个模块也是可选的，或者说不是非常建议的，应该仅用在主机内存资源紧张的情况下。
-> 最终部署，仍然建议部署多个服务更为安全和稳定。
+> 基于外部tomcat部署的war安装方式，本项目不会支持；
+> 请开发者参考相关文档自行实践测试。
 
 查看litemall-all模块，代码仅仅只有一个Application类。
 
 实际的原理是litemall-all模块内的pom.xml文件：
+1. 依赖小程序后台服务模块litemall-wx-api和管理后台服务模块litemall-admin-api,
+   打包时会自动打包到可执行jar包中，从而同时对外提供小程序数据服务和管理后台数据服务；
+2. 此外，利用maven-resources-plugin插件将管理后台前端模块litemall-admin的dist文件夹
+  自动拷贝到all模块编译的target/classes/static，而static目录正是spring boot项目默认
+  静态文件目录。因此打包时，也会自动打包到可执行jar包中，从而对外提供管理后台的静态文件服务。
+  
+   注意：
+   > 这里的maven-resources-plugin插件只是简单的拷贝dist文件夹，因此要求开发者
+   > 应该预先在litemall-admin模块中编译静态文件到dist文件夹中。
 
-1. 声明打包方式是`war`，因此最后会打包war格式
+这里all模块只是一个简单的打包方式，开发者可以自行测试实践其他方案，例如取消这里dist文件夹
+打包而直接上传部署至nginx应用中。

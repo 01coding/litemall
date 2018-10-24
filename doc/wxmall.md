@@ -5,7 +5,7 @@
 * 小商城前端，即litemall-wx模块
   * 微信小程序
 * 小商城后端，即litemall-wx-api模块
-  * Spring Boot 1.5.10
+  * Spring Boot 2.x
   * Spring MVC
   * [weixin-java-tools](https://gitee.com/binary/weixin-java-tools)
 
@@ -29,7 +29,6 @@
 * `改善`个人页面中实现订单部件，显示用户订单数量，同时点击以后跳转到订单的相应页面。
 * `改善`商品的订单中支持订单号搜索功能
 * `改善`在一些内容比较多的页面中支持“顶部”功能
-* `功能`目前已经有账号登录页面，可以再支持手机短信登录方式。
 * `功能`个人页面支持帮助中心
 * `功能`推荐功能，基于用户的一些信息，在合适的页面给出推荐商品
 
@@ -65,7 +64,7 @@ litemall
 
 开发者在微信支付平台申请以后，可以有app-id和app-secret信息。
 
-1. 在litemall-wx-api模块的src/main/resources的资源文件中设置
+1. 在litemall-core模块的src/main/resources的资源文件中设置
 
     ```
     wx.mch-id=开发者申请的mch-id
@@ -185,9 +184,6 @@ litemall
 订单费用小于88时，则需要运费8元；
 否则运费0元。
 
-目前运费8元是写在后台代码中，未来可能允许设置管理员设置其他值；
-或者采用更加符合实际情况的运费计算方式。
-
 #### 3.1.9.2 取消订单
 
 * 用户手动取消
@@ -271,8 +267,6 @@ litemall
 
 #### 3.1.16.2 CROS
 
-如果litemall-admin-api不配置CROS，则Spring Boot会失败。
-但是，这里litemall-wx-api没有配置CROS，Spring Boot却不会报错，需要进一步研究。
 
 #### 3.1.16.3 账号密码加盐
 
